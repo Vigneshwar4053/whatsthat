@@ -7,12 +7,13 @@ function Search() {
   // controls the current stream value
   const [stream, setStream] = useState(null);
   const [video, setVideo] = useState(false);
+  const[imgUrl,setCapturedUrl]=useState("");
 
   // controls the video DOM element
   const webcamVideo = useRef();
 
   //canvas object to capture image
-  const canvas = useRef();
+  const canvasRef = useRef();
 
   //output image
   const photo=useRef();
@@ -41,17 +42,21 @@ function Search() {
   };
   
   const capturePic = () => {
-    const context = canvas.current.getContext("2d");
-    context.fillStyle = "#AAA";
-    context.fillRect(0, 0, webcamVideo.current.videoWidth, webcamVideo.current.videoHeight);
-    const data = canvas.current.toDataURL("image/png");
-    photo.current.setAttribute("src", data);
+    const video = webcamVideo.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    context.drawImage(video,0, 0, video.videoWidth, video.videoHeight);
+    const data = canvas.toDataURL("image/png");
+    setCapturedUrl(data)
+    
   };
+
 
   return (
     <div className="container gap-4">
       <video ref={webcamVideo} autoPlay playsInline></video>
-      <canvas ref={canvas}></canvas>
+      <canvas ref={canvasRef}></canvas>
       <button
           className={playing?`bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded m-2`:
                             `bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2`}
@@ -62,7 +67,7 @@ function Search() {
       <button
         className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2'
         onClick={capturePic}>Capture Image</button>
-        <img ref={photo} alt="Output Image Here" />
+        <img src={imgUrl} alt="Output Image Here" />
     </div>
   );
 }
