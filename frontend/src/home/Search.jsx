@@ -6,19 +6,22 @@ function Search() {
 
   // controls the current stream value
   const [stream, setStream] = useState(null);
-  
   const [video, setVideo] = useState(false);
 
   // controls the video DOM element
   const webcamVideo = useRef();
-//canvas object to capture image
+
+  //canvas object to capture image
   const canvas = useRef();
+
+  //output image
+  const photo=useRef();
 
   // get the user's media stream
   const startStream = async () => {
       navigator.mediaDevices
         .getUserMedia({
-          video: true
+          video: {facingMode: "environment"} //"environment" for accessing rear camera on mobile
         })
         .then(newStream => {
           webcamVideo.current.srcObject = newStream;
@@ -38,7 +41,11 @@ function Search() {
   };
   
   const capturePic = () => {
-    const context = canvas.getContext("2d");
+    const context = canvas.current.getContext("2d");
+    context.fillStyle = "#AAA";
+    context.fillRect(0, 0, webcamVideo.current.videoWidth, webcamVideo.current.videoHeight);
+    const data = canvas.current.toDataURL("image/png");
+    photo.current.setAttribute("src", data);
   };
 
   return (
@@ -55,6 +62,7 @@ function Search() {
       <button
         className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2'
         onClick={capturePic}>Capture Image</button>
+        <img ref={photo} alt="Output Image Here" />
     </div>
   );
 }
