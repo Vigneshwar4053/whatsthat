@@ -4,17 +4,31 @@ const App = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
+  const [playing, setPlaying] = useState(false);
+  let [stream, setStream] = useState(null);
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const tmp_stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setStream(tmp_stream);
       if (videoRef.current) {
-        videoRef.current.srcObject = stream;
+        videoRef.current.srcObject = tmp_stream;
       }
     } catch (err) {
       console.error("Error accessing camera:", err);
     }
+    setPlaying(true);
   };
+
+  const stopCamera = async () => {
+    try{
+      setPlaying(false);
+      stream.getTracks().forEach((track) => track.stop());
+      stream.getVideoTracks()[0].enabled = !video;
+    } catch(err){
+      console.error("Error accessing camera:", err);
+    }
+};
 
   const captureImage = () => {
     const video = videoRef.current;
@@ -38,10 +52,11 @@ const App = () => {
 
       <div className="flex gap-4">
         <button
-          onClick={startCamera}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          onClick={playing ? stopCamera:startCamera}
+          className={playing?`px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600`:
+                            `px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600`}
         >
-          Start
+          {playing?'Stop':'Start'}
         </button>
 
         <button
