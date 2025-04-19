@@ -9,7 +9,8 @@ const App = () => {
 
   const startCamera = async () => {
     try {
-      const tmp_stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      //"environment" for accessing rear camera on mobile
+      const tmp_stream = await navigator.mediaDevices.getUserMedia({ video: {facingMode: "environment"} });
       setStream(tmp_stream);
       if (videoRef.current) {
         videoRef.current.srcObject = tmp_stream;
