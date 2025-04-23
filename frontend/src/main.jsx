@@ -2,14 +2,16 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router";
 import './index.css'
-import Layout from './home/Layout.jsx'
-import App from './home/App.jsx'
-import CaptureImg from './home/captureImg.jsx'
+import Layout from './Layout.jsx'
+import App from './App.jsx'
+import Demo from './components/Demo.jsx';
+import CaptureImg from './components/captureImg.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
       <Route path='' element={<App/>}/>
       <Route path='capture' element={<CaptureImg/>}/>
+      <Route path='demo' element={<Demo/>}/>
     </Route>
   )
 )
