@@ -55,7 +55,7 @@ function VideoCapture({ isConnected, connectToSSE }) {
     
     intervalRef.current = setInterval(() => {
       captureAndSendFrame();
-    }, 200);
+    }, 20000);
   };
 
   const stopStreaming = () => {
