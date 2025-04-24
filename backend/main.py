@@ -107,8 +107,12 @@ async def enhance_object_descriptions(objects: List[Dict]):
         # Get response from Groq
         messages = [HumanMessage(content=prompt)]
         response = llm.invoke(messages)
-        print(response)
+
+       
+
         return {"text": response.content}
+
+
             
     except Exception as e:
         print(f"Error in LLM enhancement: {e}")
