@@ -109,19 +109,10 @@ async def enhance_object_descriptions(objects: List[Dict]):
         # Get response from Groq
         messages = [HumanMessage(content=prompt)]
         response = llm.invoke(messages)
-        
-        # Extract JSON from response
-        # enhanced_text = response.content
-        # json_match = re.search(r'\[.*\]', enhanced_text, re.DOTALL)
+        print(response)
 
         return {"text": response.content}
 
-        # if json_match:
-        #     enhanced_objects = json.loads(json_match.group(0))
-        #     return enhanced_objects
-        # else:
-        #     print("Could not extract JSON from LLM response")
-        #     return objects
             
     except Exception as e:
         print(f"Error in LLM enhancement: {e}")
