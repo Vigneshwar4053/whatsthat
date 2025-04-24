@@ -109,7 +109,7 @@ async def enhance_object_descriptions(objects: List[Dict]):
         # Get response from Groq
         messages = [HumanMessage(content=prompt)]
         response = llm.invoke(messages)
-        print(response)
+       
 
         return {"text": response.content}
 
