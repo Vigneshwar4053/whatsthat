@@ -3,11 +3,10 @@ import VideoCapture from './VideoCapture';
 import AudioFeedback from './AudioFeedback';
 
 function Demo() {
-  // const [detectedObjects, setDetectedObjects] = useState([]);
+  const [detectedObjects, setDetectedObjects] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
   const eventSourceRef = useRef(null);
-  const [descriptionText, setDescriptionText] = useState("");
 
   useEffect(() => {
     // Cleanup function
@@ -31,7 +30,7 @@ function Demo() {
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          setDescriptionText(data.text);
+          setDetectedObjects(data.objects);
         } catch (err) {
           console.error('Error parsing SSE data:', err);
         }
@@ -59,7 +58,7 @@ function Demo() {
       
       <main>
         <VideoCapture isConnected={isConnected} connectToSSE={connectToSSE} />
-        <AudioFeedback detectedObjects={descriptionText} />
+        <AudioFeedback detectedObjects={detectedObjects} />
         
         {error && (
           <div className="error-message">
