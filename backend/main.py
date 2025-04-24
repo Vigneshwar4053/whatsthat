@@ -113,7 +113,7 @@ async def enhance_object_descriptions(objects: List[Dict]):
         # Extract JSON from response
         enhanced_text = response.content
         json_match = re.search(r'\[.*\]', enhanced_text, re.DOTALL)
-        
+        print(enhanced_text)
         if json_match:
             enhanced_objects = json.loads(json_match.group(0))
             return enhanced_objects
@@ -188,7 +188,7 @@ async def process_frame_data(frame_data: FrameData, client_id: str):
         # Send to client
         if client_id in client_connections:
             client_connections[client_id]["queue"].append({
-                "objects": enhanced_objects,
+                "objects": enhanced_objects["text"],
                 "timestamp": frame_data.timestamp
             })
             
