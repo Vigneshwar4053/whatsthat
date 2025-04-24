@@ -3,11 +3,11 @@ import VideoCapture from './VideoCapture';
 import AudioFeedback from './AudioFeedback';
 
 function Demo() {
-  // const [detectedObjects, setDetectedObjects] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
   const eventSourceRef = useRef(null);
   const [descriptionText, setDescriptionText] = useState("");
+  const [clientId, setClientId] = useState("");
 
   useEffect(() => {
     // Cleanup function
@@ -20,26 +20,57 @@ function Demo() {
 
   const connectToSSE = () => {
     try {
-      const eventSource = new EventSource('http://localhost:8000/stream');
+      // Generate a client ID if not exists
+      const cid = clientId || `client-${Date.now()}`;
+      setClientId(cid);
+      
+      // Create EventSource with client ID in header
+      const eventSource = new EventSource(`http://localhost:8000/stream`);
       eventSourceRef.current = eventSource;
       
+      // Handle connection open
       eventSource.onopen = () => {
         setIsConnected(true);
         setError(null);
+        console.log("SSE connection established");
       };
       
-      eventSource.onmessage = (event) => {
+      // Handle different event types
+      eventSource.addEventListener('connected', (event) => {
         try {
           const data = JSON.parse(event.data);
-          console.log(data)
-          setDescriptionText(data.text);
+          console.log("Connected event:", data);
+          setClientId(data.client_id);
         } catch (err) {
-          console.error('Error parsing SSE data:', err);
+          console.error('Error parsing connected event data:', err);
         }
-      };
+      });
       
+      eventSource.addEventListener('description', (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.log("Description event:", data);
+          if (data.text) {
+            setDescriptionText(data.text);
+          }
+        } catch (err) {
+          console.error('Error parsing description event data:', err);
+        }
+      });
+      
+      eventSource.addEventListener('error', (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          console.error("Error event:", data);
+          setError(data.error);
+        } catch (err) {
+          console.error('Error parsing error event data:', err);
+        }
+      });
+      
+      // Handle general errors
       eventSource.onerror = (err) => {
-        console.error('SSE error:', err);
+        console.error('SSE connection error:', err);
         setIsConnected(false);
         setError('Connection error. Please try again.');
         eventSource.close();
@@ -59,9 +90,12 @@ function Demo() {
       </header>
       
       <main>
-        <p>{descriptionText || "hello"}</p>
-        <VideoCapture isConnected={isConnected} connectToSSE={connectToSSE} />
-        <AudioFeedback detectedObjects={descriptionText} />
+        <VideoCapture 
+          isConnected={isConnected} 
+          connectToSSE={connectToSSE} 
+          clientId={clientId}
+        />
+        <AudioFeedback descriptionText={descriptionText} />
         
         {error && (
           <div className="error-message">

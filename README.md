@@ -4,9 +4,9 @@ A real-time assistive technology application that helps blind users understand t
 
 ## Overview
 
-This application captures video from the user's device camera, sends frames to a backend server for object detection using YOLOv8, enhances the descriptions using a large language model, and converts these descriptions to audio for the user.
+This application captures video from the user's device camera, sends frames to a backend server for object detection using YOLOv8 & YOLO11, enhances the descriptions using a large language model, and converts these descriptions to audio for the user.
 
-![Architectural Diagram](https://placeholder.com/800x400)
+![Architectural Diagram](https://github.com/Pramod-325/whatsthat/blob/main/WhatsThat_Architecture.png)
 
 ## Architecture
 
@@ -16,7 +16,7 @@ This application captures video from the user's device camera, sends frames to a
 - Receives descriptions and converts them to speech
 
 ### Backend (FastAPI)
-- Processes video frames with YOLOv8 for object detection
+- Processes video frames with YOLOv8 for object detection (latest models like Yolov11l or Yolo11x can be used more better accuracy and efficiency)
 - Uses Groq's LLM to generate natural language descriptions
 - Streams responses back to the client using Server-Sent Events (SSE)
 
@@ -31,45 +31,50 @@ This application captures video from the user's device camera, sends frames to a
 ## Prerequisites
 
 - Python 3.9+
-- Node.js 16+
-- Groq API key (https://console.groq.com/)
+- uv [latest Rust based project management tool for python "install for your platform from here"](https://docs.astral.sh/uv/getting-started/installation/)
+- Node.js 20+
+- Get your Groq API key (https://console.groq.com/)
+- Download a suitable Yolo model (we used 11s) (https://github.com/ultralytics/ultralytics)
 
 ## Getting Started
-
-### Backend Setup
+open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is installed by checking)
+```bash
+   uv --version
+   ```
+### Backend Setup (in Terminal 1)
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/vision-to-audio-assistant.git
-   cd vision-to-audio-assistant/backend
+   git clone https://github.com/Pramod-325/whatsthat.git
+   cd whatsthat
    ```
 
-2. Create and activate a virtual environment:
+2. Open backend folder
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   cd backend        # run this in 1st Terminal
    ```
 
 3. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   uv add -r requirements.txt       #in backend terminal
    ```
 
-4. Create a `.env` file with your Groq API key:
+4. Create a `.env` file with your Groq API key: "in backend Terminal"
    ```
    GROQ_API_KEY=your_groq_api_key_here
    ```
+   And Place the downloaded yolo models in "yolo_models folder"
 
 5. Start the backend server:
    ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   uv run main.py
    ```
 
-### Frontend Setup
+### Frontend Setup (in Terminal-2)
 
-1. Navigate to the frontend directory:
+1. Navigate to the frontend directory from 'whatsthat' folder:
    ```bash
-   cd ../frontend
+   cd frontend
    ```
 
 2. Install dependencies:
@@ -79,10 +84,11 @@ This application captures video from the user's device camera, sends frames to a
 
 3. Start the development server:
    ```bash
-   npm start
+   npm run dev    #or npm start
    ```
+   Then Navigate to '/demo' path in URL or click below link:
 
-4. Open your browser to http://localhost:3000
+4. Open your browser to http://localhost:5173/demo
 
 ## Using the Application
 
