@@ -31,6 +31,7 @@ function Demo() {
       eventSource.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          console.log(data)
           setDescriptionText(data.text);
         } catch (err) {
           console.error('Error parsing SSE data:', err);
@@ -58,6 +59,7 @@ function Demo() {
       </header>
       
       <main>
+        <p>{descriptionText || "hello"}</p>
         <VideoCapture isConnected={isConnected} connectToSSE={connectToSSE} />
         <AudioFeedback detectedObjects={descriptionText} />
         
