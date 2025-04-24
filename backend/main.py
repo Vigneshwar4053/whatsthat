@@ -22,7 +22,7 @@ from langchain.schema import HumanMessage
 
 # Load environment variables
 load_dotenv()
-
+response=""
 # Initialize FastAPI app
 app = FastAPI(title="Vision-to-Audio Backend")
 
@@ -99,19 +99,19 @@ async def enhance_object_descriptions(objects: List[Dict]):
         You are an AI assistant for blind people. Here are objects detected in a video frame:
         {objects_json}
         
-        For each object, keep the existing fields but refine the "distance" description to be more 
-        meaningful for a blind person, and add more context if needed. Keep the descriptions short 
-        and actionable. For example, "coffee cup on the table ahead" is better than just "coffee cup".
-        
-        Return only the modified JSON array with the same structure but enhanced descriptions.
+        Describe what's in the scene in a clear, concise way that would be helpful for a blind person.
+        Focus on the most important objects, their positions, and distances.
+        Keep it brief and conversational, as this will be converted to speech.
         """
         
         # Get response from Groq
         messages = [HumanMessage(content=prompt)]
         response = llm.invoke(messages)
+
        
 
         return {"text": response.content}
+
 
             
     except Exception as e:
@@ -177,16 +177,19 @@ async def process_frame_data(frame_data: FrameData, client_id: str):
         
         # Enhance descriptions using Groq LLM
         enhanced_response = await enhance_object_descriptions(top_objects)
-        
-        # Send to client
+        print(enhanced_response)
+        # Send to client - only send the text part of the LLM response
         if client_id in client_connections:
-            client_connections[client_id]["queue"].append({
-                "text": enhanced_response["text"],
-                "timestamp": frame_data.timestamp
-            })
+            client_connections[client_id]["queue"].append(enhanced_response)
             
     except Exception as e:
         print(f"Error processing frame: {e}")
+        # Send error message to client
+        if client_id in client_connections:
+            client_connections[client_id]["queue"].append({
+                "text": f"Error processing frame: {str(e)}",
+                "timestamp": frame_data.timestamp
+            })
 
 @app.post("/process-frame")
 async def receive_frame(frame_data: FrameData, background_tasks: BackgroundTasks):
@@ -195,7 +198,7 @@ async def receive_frame(frame_data: FrameData, background_tasks: BackgroundTasks
     
     # Process frame in background
     background_tasks.add_task(process_frame_data, frame_data, client_id)
-    print(f"processing Image: {FrameData}")
+    print(f"Processing frame with timestamp: {frame_data.timestamp}")
     return {"status": "Frame received for processing"}
 
 # Stream events to client
@@ -206,18 +209,16 @@ async def stream(request: Request):
     # Initialize event queue for this client
     client_connections[client_id] = {
         "connected": True,
-        "queue": []
+        "queue": ["iam keerthi","7t8hu7i","67t78h7","trfdytgy","tyyyhuhiu","67t78h7","trfdytgy","tyyyhuhiu"]
     }
     
     async def event_generator():
         try:
             # Send initial connection message
-            if client_connections[client_id]["queue"]:
-                data = client_connections[client_id]["queue"].pop(0)
-                yield {
-                    "event": "description",  # Changed from "objects" to "description"
-                    "data": json.dumps(data)
-                }
+            yield {
+                "event": "connected",
+                "data": json.dumps({"client_id": client_id, "message": "Connected to vision-to-audio service"})
+            }
             
             # Send event stream
             while client_connections[client_id]["connected"]:
@@ -230,7 +231,7 @@ async def stream(request: Request):
                 if client_connections[client_id]["queue"]:
                     data = client_connections[client_id]["queue"].pop(0)
                     yield {
-                        "event": "objects",
+                        "event": "description",  # Consistently use "description" for all LLM responses
                         "data": json.dumps(data)
                     }
                 else:
@@ -245,6 +246,11 @@ async def stream(request: Request):
                 
         except Exception as e:
             print(f"Stream error: {e}")
+            # Send error to client
+            yield {
+                "event": "error",
+                "data": json.dumps({"error": str(e)})
+            }
         finally:
             # Clean up when client disconnects
             if client_id in client_connections:
