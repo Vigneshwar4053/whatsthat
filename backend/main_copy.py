@@ -85,7 +85,7 @@ async def enhance_object_descriptions(objects: List[Dict]):
     try:
         # Skip LLM enhancement if no objects detected
         if not objects:
-            return {"text": "No objects detected in view."}
+            return objects
             
         # Initialize Groq client
         llm = ChatGroq(
@@ -123,7 +123,7 @@ async def enhance_object_descriptions(objects: List[Dict]):
             
     except Exception as e:
         print(f"Error in LLM enhancement: {e}")
-        return {"text": "Error processing scene description."}  # Return error message
+        return objects  # Return original objects on error
 
 # Process frames and run object detection
 async def process_frame_data(frame_data: FrameData, client_id: str):
@@ -183,7 +183,7 @@ async def process_frame_data(frame_data: FrameData, client_id: str):
         top_objects = detected_objects[:5]
         
         # Enhance descriptions using Groq LLM
-        enhanced_response = await enhance_object_descriptions(top_objects)
+        enhanced_objects = await enhance_object_descriptions(top_objects)
         
         # Send to client
         if client_id in client_connections:
@@ -219,12 +219,10 @@ async def stream(request: Request):
     async def event_generator():
         try:
             # Send initial connection message
-            if client_connections[client_id]["queue"]:
-                data = client_connections[client_id]["queue"].pop(0)
-                yield {
-                    "event": "description",  # Changed from "objects" to "description"
-                    "data": json.dumps(data)
-                }
+            yield {
+                "event": "connection",
+                "data": json.dumps({"status": "connected", "client_id": client_id})
+            }
             
             # Send event stream
             while client_connections[client_id]["connected"]:
