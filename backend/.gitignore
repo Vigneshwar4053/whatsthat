@@ -6,7 +6,11 @@ dist/
 wheels/
 *.egg-info
 
+
 # Virtual environments
 .venv
 /uploads
-/yolov8n.pt 
+/yolo_models
+
+# environment variables
+.env

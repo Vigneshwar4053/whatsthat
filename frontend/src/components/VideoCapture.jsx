@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-const FRAME_RATE = 5; // Frames per second to capture
+// const FRAME_RATE = 0.2; // Frames per second to capture
 const MAX_WIDTH = 640; // Max width for video frame
 const MAX_HEIGHT = 480; // Max height for video frame
 
@@ -55,7 +55,7 @@ function VideoCapture({ isConnected, connectToSSE }) {
     
     intervalRef.current = setInterval(() => {
       captureAndSendFrame();
-    }, 1000 / FRAME_RATE);
+    }, 10000);
   };
 
   const stopStreaming = () => {
@@ -68,6 +68,7 @@ function VideoCapture({ isConnected, connectToSSE }) {
   };
 
   const captureAndSendFrame = () => {
+    console.log('An image is sent to process...');
     if (!videoRef.current || !canvasRef.current || !isConnected) return;
     
     const video = videoRef.current;
@@ -85,17 +86,38 @@ function VideoCapture({ isConnected, connectToSSE }) {
     const imageData = canvas.toDataURL('image/jpeg', 0.8);
     
     // Send frame to server
-    fetch('http://localhost:8000/process-frame', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        frame: imageData,
-        timestamp: new Date().toISOString()
-      }),
-    }).catch(err => {
-      console.error('Error sending frame:', err);
+    // fetch('http://localhost:8000/process-frame', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     frame: imageData,
+    //     timestamp: new Date().toISOString()
+    //   }),
+    // }).catch(err => {
+    //   console.error('Error sending frame:', err);
+    // });
+    console.log(imageData);
+      fetch('http://localhost:8000/process-frame', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          frame: imageData,
+          timestamp: new Date().toISOString()
+        }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => console.log("Frame processed:", data))
+      .catch(err => {
+        console.error('Error sending frame:', err);
     });
   };
 

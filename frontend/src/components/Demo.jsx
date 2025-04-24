@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import VideoCapture from './Videocapture';
+import VideoCapture from './VideoCapture';
 import AudioFeedback from './AudioFeedback';
 
 function Demo() {

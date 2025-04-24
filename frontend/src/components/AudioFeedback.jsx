@@ -9,6 +9,7 @@ function AudioFeedback({ detectedObjects }) {
     // Initialize speech synthesis
     if ('speechSynthesis' in window) {
       // Set up speaking queue system
+      console.log('Audio will work');
       const processSpeakQueue = () => {
         if (speakQueueRef.current.length > 0 && !isSpeaking) {
           setIsSpeaking(true);
