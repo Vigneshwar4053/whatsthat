@@ -85,7 +85,7 @@ async def enhance_object_descriptions(objects: List[Dict]):
     try:
         # Skip LLM enhancement if no objects detected
         if not objects:
-            return {"text": "No objects detected in view."}
+            return objects
             
         # Initialize Groq client
         llm = ChatGroq(
@@ -111,21 +111,19 @@ async def enhance_object_descriptions(objects: List[Dict]):
         response = llm.invoke(messages)
         
         # Extract JSON from response
-        # enhanced_text = response.content
-        # json_match = re.search(r'\[.*\]', enhanced_text, re.DOTALL)
-
-        return {"text": response.content}
-
-        # if json_match:
-        #     enhanced_objects = json.loads(json_match.group(0))
-        #     return enhanced_objects
-        # else:
-        #     print("Could not extract JSON from LLM response")
-        #     return objects
+        enhanced_text = response.content
+        json_match = re.search(r'\[.*\]', enhanced_text, re.DOTALL)
+        
+        if json_match:
+            enhanced_objects = json.loads(json_match.group(0))
+            return enhanced_objects
+        else:
+            print("Could not extract JSON from LLM response")
+            return objects
             
     except Exception as e:
         print(f"Error in LLM enhancement: {e}")
-        return {"text": "Error processing scene description."}  # Return error message
+        return objects  # Return original objects on error
 
 # Process frames and run object detection
 async def process_frame_data(frame_data: FrameData, client_id: str):
@@ -185,12 +183,12 @@ async def process_frame_data(frame_data: FrameData, client_id: str):
         top_objects = detected_objects[:5]
         
         # Enhance descriptions using Groq LLM
-        enhanced_response = await enhance_object_descriptions(top_objects)
+        enhanced_objects = await enhance_object_descriptions(top_objects)
         
         # Send to client
         if client_id in client_connections:
             client_connections[client_id]["queue"].append({
-                "text": enhanced_response["text"],
+                "objects": enhanced_objects,
                 "timestamp": frame_data.timestamp
             })
             
@@ -221,12 +219,10 @@ async def stream(request: Request):
     async def event_generator():
         try:
             # Send initial connection message
-            if client_connections[client_id]["queue"]:
-                data = client_connections[client_id]["queue"].pop(0)
-                yield {
-                    "event": "description",  # Changed from "objects" to "description"
-                    "data": json.dumps(data)
-                }
+            yield {
+                "event": "connection",
+                "data": json.dumps({"status": "connected", "client_id": client_id})
+            }
             
             # Send event stream
             while client_connections[client_id]["connected"]:
