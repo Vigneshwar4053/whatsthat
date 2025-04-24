@@ -113,7 +113,7 @@ open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is i
 
 ## License
 
-MIT
+GNU-GPLv3
 
 ## Contributing
 
