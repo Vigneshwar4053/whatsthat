@@ -47,7 +47,7 @@ class FrameData(BaseModel):
 async def startup_event():
     global model
     # Load YOLOv8 model
-    model = YOLO("./yolo_models/yolov11m.pt")  # Using the nano model for speed
+    model = YOLO("./yolo_models/yolov8s.pt")  # Using the nano model for speed
     print("YOLO model loaded successfully")
 
 # Function to calculate rough distance estimation based on bounding box size

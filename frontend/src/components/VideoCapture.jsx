@@ -56,7 +56,7 @@ function VideoCapture({ isConnected, connectToSSE, clientId }) {
     // Immediately capture first frame
     setTimeout(() => {
       captureAndSendFrame();
-    }, 1000);
+    }, 500);
     
     // Set interval for subsequent frames
     intervalRef.current = setInterval(() => {
