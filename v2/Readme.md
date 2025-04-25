@@ -1,11 +1,10 @@
-Here's the formatted README.md file with proper Markdown syntax:
 
 ```markdown
-# Real-Time Person Detection, Tracking, and Descriptive Text Generation
+# Real-Time Object Detection, Tracking, and Descriptive Text Generation
 
 This project integrates multiple AI components to create a real-time system that:
 
-1. Detects persons using **YOLOv8**
+1. Detects Objects using **YOLOv8**
 2. Tracks them using **DeepSort**
 3. Streams video over **WebSockets**
 4. Generates descriptive text using **Groq LLM**
@@ -15,7 +14,7 @@ This project integrates multiple AI components to create a real-time system that
 
 ## 🚀 Project Features
 
-- Real-time object detection (person)
+- Real-time object detection
 - Multi-object tracking using unique IDs
 - WebSocket-based live video streaming
 - Automatic scene description using Groq LLM
@@ -84,7 +83,7 @@ results = model(frame)
 
 ## 🎯 DeepSort Tracking
 
-After detecting persons, DeepSort assigns a unique ID to each one.
+After detecting objects, DeepSort assigns a unique ID to each one.
 
 - Maintains identity across frames
 - Uses bounding box, appearance, and motion
@@ -111,7 +110,7 @@ async def websocket_endpoint(websocket: WebSocket):
 ## ✍️ Groq LLM (Descriptive Generation)
 
 For each frame, we generate a description:
-- Count of people
+- Count of objects
 - Spatial position (left/middle/right)
 - Custom prompt sent to Groq's API
 - 3–5 word summary returned
@@ -139,7 +138,7 @@ Speed: 1.4ms preprocess, 266.8ms inference, 0.6ms postprocess
 ## ✅ How It Works - End-to-End
 
 1. 📸 Capture frame from webcam/client
-2. � YOLOv8 detects people
+2. � YOLOv8 detects objects
 3. 🎯 DeepSort assigns ID and tracks
 4. 🛰️ FastAPI WebSocket returns annotated frame
 5. ✍️ Prompt sent to Groq LLM
