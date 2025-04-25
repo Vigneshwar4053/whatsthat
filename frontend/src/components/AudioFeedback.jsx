@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 function AudioFeedback({ descriptionText }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [lastSpokenText, setLastSpokenText] = useState("");
 
   useEffect(() => {
     // Initialize speech synthesis
@@ -18,7 +19,10 @@ function AudioFeedback({ descriptionText }) {
 
   useEffect(() => {
     // When new description text is received, speak it
-    if (descriptionText && 'speechSynthesis' in window) {
+    if (descriptionText && 
+        descriptionText !== lastSpokenText && 
+        'speechSynthesis' in window) {
+      
       // Cancel any ongoing speech
       window.speechSynthesis.cancel();
       
@@ -30,6 +34,7 @@ function AudioFeedback({ descriptionText }) {
       
       utterance.onstart = () => {
         setIsSpeaking(true);
+        setLastSpokenText(descriptionText);
       };
       
       utterance.onend = () => {
@@ -43,7 +48,7 @@ function AudioFeedback({ descriptionText }) {
       
       window.speechSynthesis.speak(utterance);
     }
-  }, [descriptionText]);
+  }, [descriptionText, lastSpokenText]);
 
   return (
     <div className="audio-feedback">
@@ -53,7 +58,7 @@ function AudioFeedback({ descriptionText }) {
       </div>
       <div className="current-description">
         <h3>Current Description:</h3>
-        <p>{descriptionText || 'No description available'}</p>
+        <p>{descriptionText || "Waiting for description..."}</p>
       </div>
     </div>
   );

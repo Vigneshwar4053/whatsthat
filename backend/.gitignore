@@ -10,7 +10,7 @@ wheels/
 # Virtual environments
 .venv
 /uploads
-/yolo_models
+
 
 # environment variables
 .env

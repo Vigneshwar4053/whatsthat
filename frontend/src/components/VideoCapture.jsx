@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 
-// const FRAME_RATE = 0.2; // Frames per second to capture
 const MAX_WIDTH = 640; // Max width for video frame
 const MAX_HEIGHT = 480; // Max height for video frame
+const FRAME_INTERVAL = 5000; // Send frame every 5 seconds (5000ms)
 
-function VideoCapture({ isConnected, connectToSSE }) {
+function VideoCapture({ isConnected, connectToSSE, clientId }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -53,9 +53,15 @@ function VideoCapture({ isConnected, connectToSSE }) {
     setIsStreaming(true);
     connectToSSE();
     
+    // Immediately capture first frame
+    setTimeout(() => {
+      captureAndSendFrame();
+    }, 500);
+    
+    // Set interval for subsequent frames
     intervalRef.current = setInterval(() => {
       captureAndSendFrame();
-    }, 200);
+    }, FRAME_INTERVAL);
   };
 
   const stopStreaming = () => {
@@ -68,7 +74,6 @@ function VideoCapture({ isConnected, connectToSSE }) {
   };
 
   const captureAndSendFrame = () => {
-    console.log('An image is sent to process...');
     if (!videoRef.current || !canvasRef.current || !isConnected) return;
     
     const video = videoRef.current;
@@ -83,40 +88,31 @@ function VideoCapture({ isConnected, connectToSSE }) {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     
     // Convert canvas to base64 data URL (JPEG format with quality 0.8)
-    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    const imageData = canvas.toDataURL('image/jpeg', 0.6); // Lower quality for faster transfer
     
-    // Send frame to server
-    // fetch('http://localhost:8000/process-frame', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     frame: imageData,
-    //     timestamp: new Date().toISOString()
-    //   }),
-    // }).catch(err => {
-    //   console.error('Error sending frame:', err);
-    // });
-      fetch('http://localhost:8000/process-frame', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          frame: imageData,
-          timestamp: new Date().toISOString()
-        }),
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => console.log("Frame processed:", data))
-      .catch(err => {
-        console.error('Error sending frame:', err);
+    console.log('Sending frame to process...');
+    
+    // Send frame to server with client ID
+    fetch('http://localhost:8000/process-frame', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'client-id': clientId
+      },
+      body: JSON.stringify({
+        frame: imageData,
+        timestamp: new Date().toISOString()
+      }),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => console.log("Frame processed:", data))
+    .catch(err => {
+      console.error('Error sending frame:', err);
     });
   };
 

@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+/demo_videos
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -29,5 +30,11 @@ vision-to-audio-extended*.md
 
 Searchcopy.jsx
 WorkingSearch.jsx
+AudioFeedback_copy.jsx
+captureImg.jsx
+Demo_copy.jsx
+Footer.jsx
+Header.jsx
+VideoCapture_copy.jsx
 test.js
 old_dump
