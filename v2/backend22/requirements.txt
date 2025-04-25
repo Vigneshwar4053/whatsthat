@@ -5,3 +5,4 @@ numpy
 ultralytics
 deep_sort_realtime
 python-multipart
+sse-starlette
