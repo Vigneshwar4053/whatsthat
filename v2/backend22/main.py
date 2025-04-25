@@ -21,6 +21,7 @@ from deep_sort_realtime.deepsort_tracker import DeepSort
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.schema import HumanMessage
+import torch
 
 # Load environment variables
 load_dotenv()
@@ -42,19 +43,40 @@ model = None
 tracker = None
 groq_llm = None
 last_sent_objects = {}
+device = None  # Will be set to 'cuda' or 'cpu' during startup
 
 class FrameData(BaseModel):
     frame: str
     timestamp: str
 
+def setup_device():
+    """Determine and setup the best available device (CUDA GPU or CPU)"""
+    global device
+    if torch.cuda.is_available():
+        device = 'cuda'
+        print(f"✅ CUDA is available. Using GPU: {torch.cuda.get_device_name(0)}")
+        # Additional CUDA optimizations
+        torch.backends.cudnn.benchmark = True
+        torch.backends.cuda.matmul.allow_tf32 = True
+    else:
+        device = 'cpu'
+        print("❌ CUDA not available. Falling back to CPU.")
+
 @app.on_event("startup")
 async def startup_event():
-    global model, tracker, groq_llm
-    model = YOLO("yolov8n.pt")
-    print("✅ YOLO model loaded")
+    global model, tracker, groq_llm, device
+    
+    setup_device()
+    
+    # Load model with GPU if available
+    model = YOLO("yolov8s.pt").to(device)
+    print(f"✅ YOLO model loaded on {device.upper()}")
+    
+    # Initialize tracker
     tracker = DeepSort(max_age=10)
     print("✅ DeepSort tracker initialized")
 
+    # Initialize LLM
     try:
         groq_llm = ChatGroq(
             api_key=os.getenv("GROQ_API_KEY"),
@@ -66,22 +88,22 @@ async def startup_event():
         print(f"❌ Failed to initialize Groq LLM: {str(e)}")
 
 def is_threat_object(label: str, distance: float) -> bool:
-    return label in [
-    "person", "bicycle", "car", "motorcycle", "bus", "truck", "train",
-    "bench", "chair", "couch", "bed", "dining table",
-    "knife", "bottle", "cup", "fork", "spoon", "bowl",
-    "fire hydrant", "stop sign", "traffic light", "parking meter",
-    "dog", "cat", "horse", "cow", "elephant", "bear",
-    "backpack", "umbrella", "suitcase", "skateboard", "stroller",
-    "trolley", "refrigerator", "toilet", "sink", "potted plant",
-    "laptop", "cell phone", "remote", "microwave", "oven",
-    "scissors", "teddy bear", "hair drier", "toothbrush"
-] and distance < 10.0
+    threat_objects = [
+        "person", "bicycle", "car", "motorcycle", "bus", "truck", "train",
+        "knife", "gun", "weapon", "scissors", "bat", "baseball bat",
+        "fire hydrant", "stop sign", "traffic light", "parking meter",
+        "dog", "cat", "horse", "bear", "elephant",
+        "backpack", "suitcase", "handbag", "briefcase", "bottle"
+    ]
+    return label.lower() in threat_objects and distance < 10.0
 
 def estimate_distance(box_area: float, image_area: float) -> float:
+    """Estimate distance based on relative size in image"""
+    # Simple heuristic: object appears larger when closer
     return round(10.0 * (1.0 - (box_area / image_area)), 2)
 
 def determine_position(box_center_x: float, image_width: float) -> str:
+    """Determine object's horizontal position in frame"""
     if box_center_x < image_width * 0.33:
         return "left"
     elif box_center_x > image_width * 0.66:
@@ -89,14 +111,15 @@ def determine_position(box_center_x: float, image_width: float) -> str:
     return "center"
 
 async def generate_threat_assessment(tracked_object: Dict) -> str:
+    """Generate threat assessment using LLM"""
     if not groq_llm:
         return "Warning: Security system offline"
+    
     prompt = f"""
-    You are an AI security analyst. Assess this potential threat:
+    You are an AI helping a blind person.They seeing this objects:
     {json.dumps(tracked_object, indent=2)}
 
-    Respond with ONE concise sentence in this format:
-    "[Threat Level] Alert: [Description] at [Position] ([Distance])"
+    Respond them what they see in less than 6 words.
     """
     try:
         response = groq_llm.invoke([HumanMessage(content=prompt)])
@@ -108,106 +131,152 @@ async def generate_threat_assessment(tracked_object: Dict) -> str:
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     client_id = str(uuid.uuid4())
-    print("✅ WebSocket connection accepted")
+    print(f"✅ WebSocket connection accepted from {client_id}")
+    
+    # Initialize last_sent_objects for this connection if needed
     global last_sent_objects
+    if last_sent_objects is None:
+        last_sent_objects = {}
 
     try:
         while True:
             try:
-                data_url = await websocket.receive_text()
-            except WebSocketDisconnect:
-                print(f"🔌 Client disconnected: {client_id}")
-                break
-            except Exception as e:
-                print(f"⚠️ Receive error: {e}")
-                continue
-
-            try:
-                encoded = data_url.split(",")[-1]
+                data = await websocket.receive_text()
+                if not data.startswith("data:image/"):
+                    continue
+                    
+                # Process frame
+                header, encoded = data.split(",", 1)
                 img_bytes = base64.b64decode(encoded)
                 npimg = np.frombuffer(img_bytes, np.uint8)
                 frame = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+                
                 if frame is None:
+                    await websocket.send_json({"error": "Invalid frame"})
                     continue
-
-                image_area = frame.shape[0] * frame.shape[1]
-                results = model(frame)[0]
-
-                detections = [
-                    ([int(x1), int(y1), int(x2 - x1), int(y2 - y1)], float(conf), model.names[int(cls)])
-                    for x1, y1, x2, y2, conf, cls in
-                    [(box.xyxy[0][0], box.xyxy[0][1], box.xyxy[0][2], box.xyxy[0][3], box.conf, box.cls)
-                     for box in results.boxes]
-                ]
-
+                
+                # Get frame dimensions
+                height, width = frame.shape[:2]
+                image_area = height * width
+                
+                # Run YOLO detection
+                with torch.no_grad():
+                    results = model(frame, device=device, verbose=False)[0]
+                
+                # Prepare detections for DeepSort
+                detections = []
+                for box in results.boxes:
+                    x1, y1, x2, y2 = box.xyxy[0].cpu().numpy()
+                    conf = float(box.conf)
+                    cls = int(box.cls)
+                    label = model.names[cls]
+                    
+                    detections.append((
+                        [int(x1), int(y1), int(x2-x1), int(y2-y1)],  # bbox (x,y,w,h)
+                        conf,
+                        label
+                    ))
+                
+                # Update tracker
                 tracks = tracker.update_tracks(detections, frame=frame)
-                threats = []
-                objects = []
+                
+                # Process tracks
+                current_objects = []
+                current_threats = []
                 current_ids = set()
-
+                
                 for track in tracks:
                     if not track.is_confirmed():
                         continue
-
-                    track_id = track.track_id
-                    x1, y1, x2, y2 = map(int, track.to_ltrb())
+                    
+                    track_id = str(track.track_id)  # Ensure track_id is string
+                    ltrb = track.to_ltrb()
+                    x1, y1, x2, y2 = map(int, ltrb)
                     box_area = (x2 - x1) * (y2 - y1)
                     obj_class = track.get_det_class()
-                    position = determine_position((x1 + x2) / 2, frame.shape[1])
+                    position = determine_position((x1 + x2) / 2, width)
                     distance = estimate_distance(box_area, image_area)
-
-                    obj = {
+                    
+                    obj_data = {
                         "id": track_id,
-                        "object": obj_class,
+                        "class": obj_class,
                         "position": position,
-                        "distance": distance,
-                        "box_area": box_area
+                        "distance": f"{distance:.2f} meters",
+                        "bbox": [x1, y1, x2, y2],
+                        "timestamp": datetime.now().isoformat()
                     }
-
+                    
                     current_ids.add(track_id)
-
+                    
                     if is_threat_object(obj_class, distance):
-                        if track_id not in last_sent_objects:
-                            obj["threat_level"] = "high" if distance < 3 else "medium"
-                            obj["assessment"] = await generate_threat_assessment(obj)
-                            threats.append(obj)
-                            last_sent_objects[track_id] = obj_class
+                        if track_id not in last_sent_objects or time.time() - last_sent_objects[track_id] > 30:
+                            # Generate threat assessment
+                            obj_data["threat_level"] = "high" if distance < 3 else "medium"
+                            obj_data["assessment"] = await generate_threat_assessment(obj_data)
+                            current_threats.append(obj_data)
+                            last_sent_objects[track_id] = time.time()
                     else:
-                        objects.append(obj)
-
-                # Cleanup outdated entries
-                last_sent_objects = {
-                    tid: label for tid, label in last_sent_objects.items() if tid in current_ids
-                }
-
-                await websocket.send_json({
+                        current_objects.append(obj_data)
+                
+                # Send response
+                response = {
                     "timestamp": datetime.now().isoformat(),
-                    "threats": threats,
-                    "objects": objects
-                })
-
+                    "objects": current_objects,
+                    "threats": current_threats,
+                    "device": device,
+                    "inference_speed": f"{results.speed['inference']:.1f}ms"
+                }
+                
+                await websocket.send_json(response)
+                
+            except WebSocketDisconnect:
+                break
             except Exception as e:
-                print(f"⚠️ Frame processing error: {e}")
+                print(f"⚠️ Processing error for {client_id}: {str(e)}")
+                await websocket.send_json({"error": str(e)})
                 continue
-
+                
     except Exception as e:
-        print(f"❌ WebSocket Error ({client_id}): {e}")
+        print(f"❌ WebSocket error for {client_id}: {str(e)}")
+        await websocket.send_json({"error": str(e)})
     finally:
         await websocket.close()
-        print(f"❌ WebSocket closed for client {client_id}")
+        print(f"❌ WebSocket closed for {client_id}")
 
 @app.post("/process-frame")
-async def process_frame_api(frame_data: FrameData, background_tasks: BackgroundTasks):
+async def process_frame(frame_data: FrameData, background_tasks: BackgroundTasks):
+    """Alternative endpoint for non-websocket frame processing"""
     client_id = str(uuid.uuid4())
-    background_tasks.add_task(process_frame_data, frame_data, client_id)
+    background_tasks.add_task(process_frame_async, frame_data, client_id)
     return {"status": "processing", "client_id": client_id}
 
-async def process_frame_data(frame_data: FrameData, client_id: str):
+async def process_frame_async(frame_data: FrameData, client_id: str):
+    """Background task for frame processing"""
     try:
-        pass  # Placeholder for non-WebSocket frame processing
+        # Similar processing logic as websocket endpoint
+        # ... (implementation omitted for brevity)
+        pass
     except Exception as e:
-        print(f"Processing Error: {str(e)}")
+        print(f"Error processing frame for {client_id}: {str(e)}")
+
+@app.get("/system-status")
+async def get_system_status():
+    """Check system and GPU status"""
+    status = {
+        "device": device,
+        "gpu_available": torch.cuda.is_available(),
+        "gpu_name": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "model_loaded": model is not None,
+        "tracker_loaded": tracker is not None,
+        "llm_loaded": groq_llm is not None,
+        "active_connections": len(client_connections)
+    }
+    return status
 
 @app.on_event("shutdown")
 async def shutdown_event():
+    """Cleanup on shutdown"""
     client_connections.clear()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    print("🛑 System shutdown complete")
