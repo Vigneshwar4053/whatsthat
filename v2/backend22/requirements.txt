@@ -1,7 +1,15 @@
 fastapi
 uvicorn[standard]
+python-multipart
 opencv-python-headless
 numpy
+torch
+pillow
+python-dotenv
+pydantic
+websockets
+sse-starlette
 ultralytics
 deep_sort_realtime
-python-multipart
+langchain
+langchain_groq
