@@ -1,8 +1,11 @@
 fastapi
-uvicorn[standard]
-opencv-python-headless
-numpy
-ultralytics
-deep_sort_realtime
-python-multipart
+uvicorn
 sse-starlette
+langchain
+langchain-groq
+ultralytics
+pydantic
+python-multipart
+matplotlib
+aiofiles
+requests
