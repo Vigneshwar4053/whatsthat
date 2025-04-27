@@ -74,6 +74,39 @@ Output Screenshots:
 
 ---
 
+## FAQs ❔
+
+<details>
+  <summary>**Q: How will a blind person use this this ?**</summary>
+  <p>Currently for demonstration we've added the frontend web interface, but we can separately integrate the functionality to custom hardware projects so make the application auto run or turn on using voice commands for Real-life usage</p>
+</details>
+
+<details>
+  <summary>**Q: How is Groq's API used in the application ?**</summary>
+  <p>We've used open source LLM (Llama) through Groq's API's to tailor custom responses quickly that help the user navigate with respect to the objects in the field of view</p>
+</details>
+
+<details>
+  <summary>**Q: There's a 5 second delay wouldn't that be a problem ?**</summary>
+  <p>We plan to localize the entire application so that latency will be minimal and completely privacy centric</p>
+</details>
+
+<details>
+  <summary>**Q: Does it provide responses only in English ?**</summary>
+  <p>As per the available opensource models, English responses are given correctly and we'd try to improve and integrate more languages from other FOSS foundations to bring diversity and inclusivity</p>
+</details>
+
+<details>
+  <summary>**Q: What model is used for Object detection and what is the data source ?**</summary>
+  <p>We've used Ultralytics' opensource YOLOv8s model with default COCO dataset who provide some of the industry's best ML models in computer vision</p>
+</details>
+
+<details>
+  <summary>**Q: I have other Question where can I ask it ?**</summary>
+  <p>We are open to resolve your queries and eager to collaborate. You can open an issue here or mail us at: ![link](mailto:welfare.devs@gmail.com)</p>
+</details>
+
+---
 ## ✅ Tasks & Bonus Checklist
 
 - ✅ **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
