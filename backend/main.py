@@ -28,7 +28,7 @@ app = FastAPI(title="Vision-to-Audio Backend")
 # Set up CORS to allow requests from the React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["whatsthat-2504.netlify.app"],  # In production, specify your frontend domain
+    allow_origins=["whatsthat-2504.netlify.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
