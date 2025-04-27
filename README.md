@@ -58,13 +58,16 @@ It can be integrated into various Web apps (or) IoT so that it guides the user w
 - ✅ User friendly
 - ✅ Responsive
 
-Output Screenshots:
-![image-](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Feqnycujrnpauuwlcogie.webp)
-![image-2](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fdi8h70orx0dzsogu8hf3.webp)
-![image-3](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fjgmoevhijyt0gc4tcxyc.webp)
-![image-4](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fixkb8a9svcdw56k2bnlc.webp)
-![image-5](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fuq8bfeucgfcts3rvha0o.webp)
-![image-6](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fxgrakx9twuqrjt7zbfhr.webp)
+Output Screenshots: <br>
+---
+<p style="display: flex">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Feqnycujrnpauuwlcogie.webp" style="margin:2em" alt="image-1" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fdi8h70orx0dzsogu8hf3.webp" style="margin:2em" alt="image-2" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fjgmoevhijyt0gc4tcxyc.webp" style="margin:2em" alt="image-3" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fixkb8a9svcdw56k2bnlc.webp" style="margin:2em" alt="image-4" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fuq8bfeucgfcts3rvha0o.webp" style="margin:2em" alt="image-5" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fxgrakx9twuqrjt7zbfhr.webp" style="margin:2em" alt="image-6" width="300">
+</p>
 ---
 
 ## 📽️ Demo & Deliverables
@@ -77,32 +80,32 @@ Output Screenshots:
 ## FAQs ❔
 
 <details>
-  <summary>**Q: How will a blind person use this this ?**</summary>
+  <summary><b>Q: How will a blind person use this this ?</b></summary>
   <p>Currently for demonstration we've added the frontend web interface, but we can separately integrate the functionality to custom hardware projects so make the application auto run or turn on using voice commands for Real-life usage</p>
 </details>
 
 <details>
-  <summary>**Q: How is Groq's API used in the application ?**</summary>
+  <summary><b>Q: How is Groq's API used in the application ?</b></summary>
   <p>We've used open source LLM (Llama) through Groq's API's to tailor custom responses quickly that help the user navigate with respect to the objects in the field of view</p>
 </details>
 
 <details>
-  <summary>**Q: There's a 5 second delay wouldn't that be a problem ?**</summary>
+  <summary><b>Q: There's a 5 second delay wouldn't that be a problem ?</b></summary>
   <p>We plan to localize the entire application so that latency will be minimal and completely privacy centric</p>
 </details>
 
 <details>
-  <summary>**Q: Does it provide responses only in English ?**</summary>
+  <summary><b>Q: Does it provide responses only in English ?</b></summary>
   <p>As per the available opensource models, English responses are given correctly and we'd try to improve and integrate more languages from other FOSS foundations to bring diversity and inclusivity</p>
 </details>
 
 <details>
-  <summary>**Q: What model is used for Object detection and what is the data source ?**</summary>
+  <summary><b>Q: What model is used for Object detection and what is the data source ?</b></summary>
   <p>We've used Ultralytics' opensource YOLOv8s model with default COCO dataset who provide some of the industry's best ML models in computer vision</p>
 </details>
 
 <details>
-  <summary>**Q: I have other Question where can I ask it ?**</summary>
+  <summary><b>Q: I have other Question where can I ask it ?</b></summary>
   <p>We are open to resolve your queries and eager to collaborate. You can open an issue here or mail us at: ![link](mailto:welfare.devs@gmail.com)</p>
 </details>
 
