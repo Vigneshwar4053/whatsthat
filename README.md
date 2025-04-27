@@ -101,7 +101,7 @@ Output Screenshots: <br>
 
 <details>
   <summary><b>Q: I have other Question where can I ask it ?</b></summary>
-  <p>We are open to resolve your queries and eager to collaborate. You can open an issue here or mail us at: ![link](mailto:welfare.devs@gmail.com)</p>
+  <p>We are open to resolve your queries and eager to collaborate. You can open an issue here or mail us at: <a href="mailto:welfare.devs@gmail.com">link</a></p>
 </details>
 
 ---
