@@ -117,31 +117,41 @@ function VideoCapture({ isConnected, connectToSSE, clientId }) {
   };
 
   return (
-    <div className="video-capture">
-      <div className="video-container">
+    <div className="container mx-auto px-4 py-6 flex flex-col items-center">
+      <div className="w-full max-w-2xl mb-6">
         <video 
           ref={videoRef}
           autoPlay 
           playsInline
           muted
           onCanPlay={() => setHasPermissions(true)}
+          className="rounded-lg shadow-lg border-2 border-purple-300 w-full"
         />
-        <canvas ref={canvasRef} style={{ display: 'none' }} />
+        <canvas ref={canvasRef} className="hidden" />
       </div>
       
-      <div className="controls">
+      <div className="flex justify-center mt-4">
         {!hasPermissions && (
-          <button onClick={startCamera}>
+          <button 
+            onClick={startCamera}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-full shadow-md transition-colors duration-300"
+          >
             Enable Camera
           </button>
         )}
         
         {hasPermissions && !isStreaming ? (
-          <button onClick={startStreaming} className="start-button">
+          <button 
+            onClick={startStreaming} 
+            className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-medium py-3 px-8 rounded-full shadow-md transition-all duration-300"
+          >
             Start Vision Assistant
           </button>
         ) : hasPermissions && (
-          <button onClick={stopStreaming} className="stop-button">
+          <button 
+            onClick={stopStreaming} 
+            className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-full shadow-md transition-colors duration-300"
+          >
             Stop Vision Assistant
           </button>
         )}
