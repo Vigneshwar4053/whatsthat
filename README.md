@@ -59,9 +59,12 @@ It can be integrated into various Web apps (or) IoT so that it guides the user w
 - ✅ Responsive
 
 Output Screenshots:
-![]()
-![]()
-![]()
+![image-](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Feqnycujrnpauuwlcogie.webp)
+![image-2](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fdi8h70orx0dzsogu8hf3.webp)
+![image-3](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fjgmoevhijyt0gc4tcxyc.webp)
+![image-4](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fixkb8a9svcdw56k2bnlc.webp)
+![image-5](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fuq8bfeucgfcts3rvha0o.webp)
+![image-6](https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fxgrakx9twuqrjt7zbfhr.webp)
 ---
 
 ## 📽️ Demo & Deliverables
