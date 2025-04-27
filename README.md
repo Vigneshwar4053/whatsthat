@@ -72,9 +72,7 @@ Output Screenshots: <br>
 
 ## 📽️ Demo & Deliverables
 
-- **Demo Video Link:** [Paste YouTube or Loom link here]  
-- **Pitch Deck / PPT Link:** [Paste Google Slides / PDF link here]  
-
+- **Demo Video Link:** [https://youtu.be/ss8takCc2xk?si=mAEUUjNx7uWKhPXz]
 ---
 
 ## FAQs ❔
