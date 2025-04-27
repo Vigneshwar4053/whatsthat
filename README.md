@@ -35,6 +35,10 @@ To build a Realtime Assistive technology that guides blind people in their day t
 
 It can be integrated into various Web apps (or) IoT so that it guides the user with what's in front of them whether that's a threat or general obstacles like so. (currently we present the web-app for demonstration purpose with 'basic utility')
 
+---
+<h2>System Architecture</h2><br>
+---
+
 ![Architectural Diagram](https://github.com/Pramod-325/whatsthat/blob/main/WhatsThat_Architecture.png)
 
 ---
@@ -79,7 +83,7 @@ Output Screenshots: <br>
 
 <details>
   <summary><b>Q: How will a blind person use this this ?</b></summary>
-  <p>Currently for demonstration we've added the frontend web interface, but we can separately integrate the functionality to custom hardware projects so make the application auto run or turn on using voice commands for Real-life usage</p>
+  <p>Currently for demonstration we've added the frontend web interface, but we can separately integrate the functionality to custom hardware projects to make the application auto run or turn on using voice commands for Real-life usage</p>
 </details>
 
 <details>
