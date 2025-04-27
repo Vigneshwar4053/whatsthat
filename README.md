@@ -90,11 +90,6 @@ Output Screenshots: <br>
 </details>
 
 <details>
-  <summary><b>Q: There's a 5 second delay wouldn't that be a problem ?</b></summary>
-  <p>We plan to localize the entire application so that latency will be minimal and completely privacy centric</p>
-</details>
-
-<details>
   <summary><b>Q: Does it provide responses only in English ?</b></summary>
   <p>As per the available opensource models, English responses are given correctly and we'd try to improve and integrate more languages from other FOSS foundations to bring diversity and inclusivity</p>
 </details>
