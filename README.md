@@ -1,54 +1,141 @@
-# Vision-to-Audio Assistant
+![github-submission-banner](https://github.com/user-attachments/assets/a1493b84-e4e2-456e-a791-ce35ee2bcf2f)
 
-A real-time assistive technology application that helps blind users understand their surroundings by converting camera input into audio descriptions.
+# 🚀 WhatsThat -(Vision-to-Audio Assistant)
 
-## Overview
+A Software assistant module that helps visually impaired users understand their surroundings by converting camera input into audio descriptions.
+<br>
 
-This application captures video from the user's device camera, sends frames to a backend server for object detection using YOLOv8 & YOLO11, enhances the descriptions using a large language model, and converts these descriptions to audio for the user.
+---
+
+## 📌 Problem Statement -1
+
+**Weave AI magic with Groq**
+
+---
+
+## 🎯 Objective
+
+To build a Realtime Assistive technology that guides blind people in their day to day travel.
+
+---
+
+## 🧠 Team & Approach
+
+### Team Name:  
+`Quantumania`
+
+### Team Members:  
+- [Vigneshwar](https://github.com/Vigneshwar4053)
+- [Bhuvan](https://github.com/bhuvan308)  
+- [Keerthi](https://github.com/keerthiboga) 
+- [Pramod](https://github.com/Pramod-325)
+
+### Your Approach:  
+- This application captures video from the user's device camera, sends frames to a backend server for object detection using YOLOv8s ML model (default), enhances the descriptions using a LLM (llama3-70b-8192), and sends back response descriptions which will be converted to audio for the user.
+
+It can be integrated into various Web apps (or) IoT so that it guides the user with what's in front of them whether that's a threat or general obstacles like so. (currently we present the web-app for demonstration purpose with 'basic utility')
+
+---
+<h2>System Architecture</h2><br>
+---
 
 ![Architectural Diagram](https://github.com/Pramod-325/whatsthat/blob/main/WhatsThat_Architecture.png)
 
-## Architecture
+---
 
-### Frontend (React)
-- Captures video frames from the device camera
-- Establishes an SSE connection with the backend
-- Receives descriptions and converts them to speech
+## 🛠️ Tech Stack
 
-### Backend (FastAPI)
-- Processes video frames with YOLOv8 for object detection (latest models like Yolov11l or Yolo11x can be used more better accuracy and efficiency)
-- Uses Groq's LLM to generate natural language descriptions
-- Streams responses back to the client using Server-Sent Events (SSE)
+### Core Technologies Used:
+- Frontend: React (for visual demo at present) but front end is not mandatory
+- Backend: FastAPI
+- Object detection ML-model: YOLOv8s
+- APIs: Groq's for LLM integration
+- Hosting: netlify (for frontend)
 
-### Data Flow
-1. User grants camera access in the React application
-2. Video frames are captured and sent to the FastAPI backend
-3. Object detection identifies objects, positions, and distances
-4. LLM generates a natural language description
-5. Description is streamed to the frontend
-6. Web Speech API converts the text to audio
+### Sponsor Technologies Used (if any):
+- ✅ **Groq:** _We used Groq for tailoring the responses for the user as fast as possible for the set of detected objects in the video scene_
+---
 
-## Prerequisites
+## ✨ Key Features
+- ✅ Modular Architecture
+- ✅ Visual recognition scene by multiple objects with respect to their timings in the Video Frame
+- ✅ User friendly
+- ✅ Responsive
 
-- Python 3.9+
-- uv [latest Rust based project management tool for python "install for your platform from here"](https://docs.astral.sh/uv/getting-started/installation/)
+Output Screenshots: <br>
+---
+<p style="display: flex">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Feqnycujrnpauuwlcogie.webp" style="margin:2em" alt="image-1" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fdi8h70orx0dzsogu8hf3.webp" style="margin:2em" alt="image-2" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fjgmoevhijyt0gc4tcxyc.webp" style="margin:2em" alt="image-3" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fixkb8a9svcdw56k2bnlc.webp" style="margin:2em" alt="image-4" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fuq8bfeucgfcts3rvha0o.webp" style="margin:2em" alt="image-5" width="300">
+<img src="https://github.com/Pramod-325/whatsthat/blob/main/demo_files%2Fxgrakx9twuqrjt7zbfhr.webp" style="margin:2em" alt="image-6" width="300">
+</p>
+---
+
+## 📽️ Demo & Deliverables
+
+- **Demo Video Link:** [https://youtu.be/ss8takCc2xk?si=mAEUUjNx7uWKhPXz]
+---
+
+## FAQs ❔
+
+<details>
+  <summary><b>Q: How will a blind person use this this ?</b></summary>
+  <p>Currently for demonstration we've added the frontend web interface, but we can separately integrate the functionality to custom hardware projects to make the application auto run or turn on using voice commands for Real-life usage</p>
+</details>
+
+<details>
+  <summary><b>Q: How is Groq's API used in the application ?</b></summary>
+  <p>We've used open source LLM (Llama) through Groq's API's to tailor custom responses quickly that help the user navigate with respect to the objects in the field of view</p>
+</details>
+
+<details>
+  <summary><b>Q: Does it provide responses only in English ?</b></summary>
+  <p>As per the available opensource models, English responses are given correctly and we'd try to improve and integrate more languages from other FOSS foundations to bring diversity and inclusivity</p>
+</details>
+
+<details>
+  <summary><b>Q: What model is used for Object detection and what is the data source ?</b></summary>
+  <p>We've used Ultralytics' opensource YOLOv8s model with default COCO dataset who provide some of the industry's best ML models in computer vision</p>
+</details>
+
+<details>
+  <summary><b>Q: I have other Question where can I ask it ?</b></summary>
+  <p>We are open to resolve your queries and eager to collaborate. You can open an issue here or mail us at: <a href="mailto:welfare.devs@gmail.com">link</a></p>
+</details>
+
+---
+## ✅ Tasks & Bonus Checklist
+
+- ✅ **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
+- ✅ **All members of the team completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  (Details in Participant Manual)
+- ✅ **All members of the team completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  (Details in Participant Manual)
+
+---
+
+## 🧪 How to Run the Project
+
+### Requirements:
+- Python 3.11+
+- uv [latest Rust based project management tool for python "install for your platform from here"](https://docs.astral.sh/uv/getting-started/installation/) (optional)
 - Node.js 20+
-- Get your Groq API key (https://console.groq.com/)
-- Download a suitable Yolo model (we used 11s) (https://github.com/ultralytics/ultralytics)
+- Get your Groq API key (https://console.groq.com/) .env file in backend
+- Download a suitable Yolo model or use it from the Repo we provided (we've used 'YOLOv8s') (https://github.com/ultralytics/ultralytics)
 
-## Getting Started
-open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is installed by checking)
+### Local Setup:
+**open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is installed by checking :)**
 ```bash
-   uv --version
+uv --version   #to check if uv is installed properly
    ```
-### Backend Setup (in Terminal 1)
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/Pramod-325/whatsthat.git
    cd whatsthat
    ```
-
+### Backend Setup (in Terminal 1)
 2. Open backend folder
    ```bash
    cd backend        # run this in 1st Terminal
@@ -56,18 +143,22 @@ open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is i
 
 3. Install dependencies:
    ```bash
-   uv add -r requirements.txt       #in backend terminal
+    uv add -r requirements.txt          #in backend terminal (if uv is installed)
+                    (or)
+    pip install -r requirements.txt     #if uv is not installed
    ```
 
 4. Create a `.env` file with your Groq API key: "in backend Terminal"
    ```
    GROQ_API_KEY=your_groq_api_key_here
    ```
-   And Place the downloaded yolo models in "yolo_models folder"
+   And Place the downloaded yolo models in "yolo_models directory" or use the given one
 
 5. Start the backend server:
    ```bash
-   uv run main.py
+    uv run main.py           #if uv is installed
+            (or)
+    python main.py
    ```
 
 ### Frontend Setup (in Terminal-2)
@@ -84,11 +175,11 @@ open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is i
 
 3. Start the development server:
    ```bash
-   npm run dev    #or npm start
+   npm run dev
    ```
-   Then Navigate to '/demo' path in URL or click below link:
+   Then Navigate to path in URL or click below link:
 
-4. Open your browser to http://localhost:5173/demo
+4. Open your browser to http://localhost:5173/ (Make sure WebCam is present)
 
 ## Using the Application
 
@@ -97,24 +188,33 @@ open two separate terminals into same "whatsthat" folder:,<br>(Make sure uv is i
 3. The application will detect objects and provide audio descriptions
 4. Click "Stop Vision Assistant" to end the session
 
-## Technical Details
 
-- **Object Detection**: YOLOv8 nano model for real-time performance
-- **Position Detection**: Objects are positioned relative to the viewer (left, center, right)
-- **Distance Estimation**: Based on object size in the frame (very close, close, medium, far, very far)
-- **LLM Integration**: Using llama3-70b-8192 model via Groq for natural language descriptions
-- **Real-time Communication**: Server-Sent Events for efficient streaming
+Provide any backend/frontend split or environment setup notes here.
 
-## Performance Considerations
+---
 
-- Frame capture occurs every 5 seconds to balance responsiveness with server load
-- Images are compressed to JPEG quality 0.6 to reduce bandwidth usage
-- Only the top 5 objects (by confidence) are included in descriptions
+## 🧬 Future Scope
 
-## License
+- 📈 Improved YOLO models with custom data training
+- 🛡️ Security enhancements like integrating everything locally
+- 🌐 Adding more LLM integration for native languages for worldwide users
 
-GNU-GPLv3
+---
 
-## Contributing
+## 📎 Resources / Credits
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- GROQ's LPU's APIs for fast LLM response
+- Open source libraries or tools: ReactJS, FastAPI, YOLOv8s COCO dataset for object detection
+- Youtube Video References by:
+    - [Keerti Purswani](https://www.youtube.com/@KeertiPurswani/videos)
+    - [Arpit Bhayani](https://www.youtube.com/@AsliEngineering/videos)
+    - [Piyush Garg](https://www.youtube.com/@piyushgargdev/videos)
+    - [Chai aur Code](https://www.youtube.com/@chaiaurcode/videos)
+
+---
+
+## 🏁 Final Words
+
+It's our first online hackathon and a completely a new experience which we enjoyed a lot, there were challenges like working of project in one's computer and not others 😂. We learnt how to properly collab online to complete a project using Github's core functionality and the attempts we made to deploy the application and will forever be a memorable one beacause of the way [Namespace-community](https://www.namespacecomm.in) has planned & executed it, so a huge shoutout also goes to them 🎊🎉🎉
+
+---
